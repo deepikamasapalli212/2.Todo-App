@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Todo App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 🌌 DARK NEON BACKGROUND */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1f0036, #3c096c, #7209b7);
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Floating Glow Circles */
+        body::before,
+        body::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+        }
+
+        body::before {
+            background: #ff00ff;
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            background: #00f2fe;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        /* Glass Card */
+        .todo-container {
+            position: relative;
+            z-index: 1;
+            width: 400px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 65%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #ff00ff, #00f2fe);
+            color: white;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        li {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete {
+            background: red;
+            padding: 5px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="todo-container">
+        <h1>Smart Todo App</h1>
+
+        <input type="text" id="taskInput" placeholder="Enter a task...">
+        <button onclick="addTask()">Add</button>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        const taskInput = document.getElementById("taskInput");
+        const taskList = document.getElementById("taskList");
+
+        // Load tasks
+        window.onload = function() {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(task => createTask(task));
+        };
+
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText === "") return;
+
+            createTask(taskText);
+            saveTask(taskText);
+            taskInput.value = "";
+        }
+
+        function createTask(text) {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                ${text}
+                <span class="delete" onclick="deleteTask(this)">X</span>
+            `;
+            taskList.appendChild(li);
+        }
+
+        function deleteTask(element) {
+            const taskText = element.parentElement.firstChild.textContent.trim();
+            element.parentElement.remove();
+            removeTask(taskText);
+        }
+
+        function saveTask(task) {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push(task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function removeTask(task) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks = tasks.filter(t => t !== task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+    </script>
+
+</body>
+</html>
